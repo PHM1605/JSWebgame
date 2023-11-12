@@ -3,7 +3,7 @@ const ctx = canvas.getContext('2d');
 const CANVAS_WIDTH = canvas.width = 800;
 const CANVAS_HEIGHT = canvas.height = 700;
 
-let gameSpeed = 15;
+let gameSpeed = 5;
 const backgroundLayer1 = new Image();
 backgroundLayer1.src = 'layer-1.png';
 const backgroundLayer2 = new Image();
@@ -30,21 +30,37 @@ class Layer {
         this.speed = gameSpeed * this.speedModifier;
     }
     update() {
-
+        this.speed = gameSpeed * this.speedModifier;
+        if (this.x <= -this.width) {
+            this.x = this.width + this.x2 - this.speed;
+        } else {
+            this.x -= this.speed;
+        }
+        if (this.x2 <= -this.width) {
+            this.x2 = this.width + this.x - this.speed;
+        } else {
+            this.x2 -= this.speed;
+        }
     }
     draw() {
-        
+        ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+        ctx.drawImage(this.image, this.x2, this.y, this.width, this.height);
     }
 }
+const layer1 = new Layer(backgroundLayer1, 0.2)
+const layer2 = new Layer(backgroundLayer2, 0.4)
+const layer3 = new Layer(backgroundLayer3, 0.6)
+const layer4 = new Layer(backgroundLayer4, 0.8)
+const layer5 = new Layer(backgroundLayer5, 1);
+
+const gameObjects = [layer5];
 
 function animate() {
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-    ctx.drawImage(backgroundLayer4, x, 0);
-    ctx.drawImage(backgroundLayer4, x2, 0);
-    if (x<=-2400) x=2400-gameSpeed;
-    else x-=gameSpeed;
-    if (x2<=-2400) x2=2400-gameSpeed;
-    else x2-=gameSpeed;
+    gameObjects.forEach((object)=>{
+        object.update();
+        object.draw();
+    });
     requestAnimationFrame(animate);
 }
 
